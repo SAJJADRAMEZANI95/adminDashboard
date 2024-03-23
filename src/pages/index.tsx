@@ -3,6 +3,7 @@ import styles from "@/styles/Home.module.css";
 import Dashboard from "./dashboard";
 import Header from "@/components/header";
 import SideMenu from "@/components/sideMenu";
+import Login from "@/components/login/Login";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
         <Header />
         <SideMenu />
         <Dashboard />
+        <Login/>
       </main>
     </>
   );
