@@ -1,12 +1,12 @@
 import Head from "next/head";
-import styles from "@/styles/Home.module.css";
 import Dashboard from "./dashboard";
 import Header from "@/components/header";
 import SideMenu from "@/components/sideMenu";
 import { useSession } from "next-auth/react";
 import Login from "@/components/login";
+import scss from './Home.module.scss'
 
-export default function Home() {
+const Home:React.FC=()=> {
   const { data: session } = useSession();
   return (
     <>
@@ -16,8 +16,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <Header />
+      <main className={scss.main}>
         {session && (
           <>
             <SideMenu />
@@ -29,3 +28,5 @@ export default function Home() {
     </>
   );
 }
+
+export default Home;

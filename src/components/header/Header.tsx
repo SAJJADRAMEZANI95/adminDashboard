@@ -9,15 +9,21 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import ThemeToggleButton from "../themeToggleButton";
+import { useMediaQuery } from "@mui/material";
+import { Button } from "@mui/material";
+import { styled } from "@mui/material";
 
 const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+export type HederProps = {
+  ColorModeContext: React.Context<{ toggleColorMode: () => void }>;
+};
 
-const Header = () => {
+const Header = (props: HederProps) => {
+  const { ColorModeContext } = props;
   const { data: session } = useSession();
   const userProfileIMG = session?.user?.image as string;
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -41,6 +47,11 @@ const Header = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const tabletCheck = useMediaQuery("(min-width: 768px)");
+  const LoginButton = styled(Button)({
+    textTransform: "none",
+    width:"100%",
+  });
 
   return (
     <AppBar position="static">
@@ -62,7 +73,7 @@ const Header = () => {
               textDecoration: "none",
             }}
           >
-            {session?.user?.name as string}
+            Data Soft
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -118,20 +129,25 @@ const Header = () => {
               textDecoration: "none",
             }}
           >
-            LOGO
+            Data Soft
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{ my: 2, display: "block", color: "inherit" }}
               >
                 {page}
               </Button>
             ))}
           </Box>
-
+          <ThemeToggleButton ColorModeContext={ColorModeContext} />
+          {session && tabletCheck && (
+            <Box sx={{ paddingRight: 5 }}>
+              <Typography>sign in as {session?.user?.name}</Typography>
+            </Box>
+          )}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open Profile Setting">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -158,9 +174,13 @@ const Header = () => {
               onClose={handleCloseUserMenu}
             >
               <MenuItem onClick={() => (session ? signOut() : signIn())}>
-                <Typography textAlign="center">
-                  {session ? "Logout" : "Login"}
-                </Typography>
+                <LoginButton
+                  variant="contained"
+                  color={session ? "error":"success"}
+                  onClick={() => (session ? signOut() : signIn())}
+                >
+                  {session ? "signOut" : "signIn"}
+                </LoginButton>
               </MenuItem>
             </Menu>
           </Box>
