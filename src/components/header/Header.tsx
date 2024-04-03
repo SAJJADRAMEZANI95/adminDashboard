@@ -1,5 +1,4 @@
-import React from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,23 +8,22 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import ThemeToggleButton from "../themeToggleButton";
+import { signIn, signOut, useSession } from "next-auth/react";
+import ThemeToggleButton from "@/components/themeToggleButton";
 import { useMediaQuery } from "@mui/material";
-import { Button } from "@mui/material";
-import { styled } from "@mui/material";
 
-const pages = ["Products", "Pricing", "Blog"];
-export type HederProps = {
+export type HeaderProps = {
   ColorModeContext: React.Context<{ toggleColorMode: () => void }>;
 };
 
-const Header = (props: HederProps) => {
+const Header = (props: HeaderProps) => {
   const { ColorModeContext } = props;
   const { data: session } = useSession();
-  const userProfileIMG = session?.user?.image as string;
+  const userProfileImg = session?.user?.image as string;
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -47,22 +45,19 @@ const Header = (props: HederProps) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
   const tabletCheck = useMediaQuery("(min-width: 768px)");
-  const LoginButton = styled(Button)({
-    textTransform: "none",
-    width:"100%",
-  });
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ marginBottom: "40px" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} /> */}
+          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -73,51 +68,14 @@ const Header = (props: HederProps) => {
               textDecoration: "none",
             }}
           >
-            Data Soft
+            DataSoft
           </Typography>
-
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href=""
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -129,31 +87,20 @@ const Header = (props: HederProps) => {
               textDecoration: "none",
             }}
           >
-            Data Soft
+            DataSoft
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, display: "block", color: "inherit" }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
-          <ThemeToggleButton ColorModeContext={ColorModeContext} />
-          {session && tabletCheck && (
-            <Box sx={{ paddingRight: 5 }}>
-              <Typography>sign in as {session?.user?.name}</Typography>
+          {tabletCheck && (
+            <Box sx={{ paddingRight: 5, marginLeft: "auto" }}>
+              <Typography>Signed in as {session?.user?.email}</Typography>
             </Box>
           )}
+          <ThemeToggleButton ColorModeContext={ColorModeContext} />
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open Profile Setting">
+            <Tooltip title="Open profile settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
                   alt={session?.user?.name as string}
-                  src={session?.user?.image as string}
+                  src={userProfileImg}
                 />
               </IconButton>
             </Tooltip>
@@ -174,13 +121,9 @@ const Header = (props: HederProps) => {
               onClose={handleCloseUserMenu}
             >
               <MenuItem onClick={() => (session ? signOut() : signIn())}>
-                <LoginButton
-                  variant="contained"
-                  color={session ? "error":"success"}
-                  onClick={() => (session ? signOut() : signIn())}
-                >
-                  {session ? "signOut" : "signIn"}
-                </LoginButton>
+                <Typography textAlign="center">
+                  {session ? "Logout" : "Login"}
+                </Typography>
               </MenuItem>
             </Menu>
           </Box>
@@ -189,5 +132,4 @@ const Header = (props: HederProps) => {
     </AppBar>
   );
 };
-
 export default Header;
