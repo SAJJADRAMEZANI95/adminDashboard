@@ -1,15 +1,16 @@
 import { CSSObject } from "@mui/system";
 import * as React from "react";
-import Link from "next/link";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import Person2Icon from "@mui/icons-material/Person2";
 import HomeIcon from "@mui/icons-material/Home";
-import { Settings } from "@mui/icons-material";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
+import { Settings } from "@mui/icons-material";
+import Link from "next/link";
 import scss from "./SideMenu.module.scss";
+
 import {
   Divider,
   Drawer,
@@ -22,6 +23,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { signOut } from "next-auth/react";
 
 const drawerWidth = 240;
 
@@ -46,8 +48,8 @@ const closedMixin = (theme: Theme): CSSObject => ({
   },
 });
 
-const menuRouteList = ["data", "profile", "setting"];
-const menuListTranslations = ["Data", "Profile", "Settings", "Sing Out"];
+const menuRouteList = ["data", "profile", "settings", ""];
+const menuListTranslations = ["Data", "Profile", "Settings", "Sign Out"];
 const menuListIcons = [
   <EqualizerIcon />,
   <Person2Icon />,
@@ -63,6 +65,12 @@ const SideMenu = () => {
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
+
+  const handleListItemButtonClick = (text: string) => {
+    text === "Sign Out" ? signOut() : null;
+    setOpen(false);
+  };
+
   return (
     <Drawer
       variant="permanent"
@@ -98,14 +106,18 @@ const SideMenu = () => {
         </IconButton>
       </div>
       <Divider />
+      <Divider />
       <List>
         {menuListTranslations.map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: "block" }}>
             <Link
-              href={`/dashboard/${menuRouteList[index]}`}
               className={scss.link}
+              href={`/dashboard/${menuRouteList[index]}`}
             >
               <ListItemButton
+                onClick={() => handleListItemButtonClick(text)}
+                title={text}
+                aria-label={text}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -127,7 +139,7 @@ const SideMenu = () => {
                     color: theme.palette.text.primary,
                     opacity: open ? 1 : 0,
                   }}
-                />
+                />{" "}
               </ListItemButton>
             </Link>
           </ListItem>
